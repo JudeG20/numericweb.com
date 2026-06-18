@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Numeric — Web Build Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-900: #0a1628;
+    --blue-800: #0f2244;
+    --blue-600: #1547a0;
+    --blue-500: #1d63d4;
+    --blue-400: #3b82f6;
+    --blue-200: #bfdbfe;
+    --blue-100: #dbeafe;
+    --blue-50:  #eff6ff;
+    --white:    #ffffff;
+    --slate:    #64748b;
+    --text:     #0f172a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.7;
+    overflow-x: hidden;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 5vw;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(59,130,246,0.12);
+  }
+
+  .nav-logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800; font-size: 1.4rem;
+    color: var(--blue-600);
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--blue-400); }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--text); text-decoration: none;
+    opacity: 0.7; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--blue-500); }
+
+  .nav-cta {
+    background: var(--blue-500); color: var(--white) !important;
+    opacity: 1 !important; padding: 0.5rem 1.25rem;
+    border-radius: 6px; transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--blue-600) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center;
+    overflow: hidden;
+    background: var(--blue-900);
+  }
+
+  #network-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 0 5vw; max-width: 780px;
+    margin-top: 5rem;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--blue-400);
+    margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block;
+    width: 24px; height: 2px; background: var(--blue-400);
+  }
+
+  .hero h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--blue-400), #60a5fa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.125rem; font-weight: 300;
+    color: var(--blue-200); max-width: 520px;
+    margin-bottom: 2.5rem; line-height: 1.75;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: var(--blue-500); color: var(--white);
+    padding: 0.875rem 2rem; border-radius: 8px;
+    font-weight: 500; font-size: 0.95rem;
+    text-decoration: none; display: inline-block;
+    transition: background 0.2s, transform 0.15s;
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--blue-400); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.8);
+    padding: 0.875rem 2rem; border-radius: 8px;
+    font-weight: 500; font-size: 0.95rem;
+    text-decoration: none; display: inline-block;
+    transition: border-color 0.2s, color 0.2s, transform 0.15s;
+  }
+  .btn-ghost:hover {
+    border-color: var(--blue-400); color: var(--white);
+    transform: translateY(-1px);
+  }
+
+  .hero-scroll {
+    position: absolute; bottom: 2.5rem; left: 5vw;
+    z-index: 2;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.78rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: rgba(255,255,255,0.35);
+  }
+  .scroll-line {
+    width: 40px; height: 1px; background: rgba(255,255,255,0.2);
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: var(--blue-50);
+    border-bottom: 1px solid var(--blue-100);
+    padding: 2rem 5vw;
+    display: flex; gap: 3rem; flex-wrap: wrap;
+    justify-content: center;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 2rem; font-weight: 800;
+    color: var(--blue-600); letter-spacing: -0.01em;
+  }
+  .stat-label {
+    font-size: 0.8rem; color: var(--slate);
+    font-weight: 400; letter-spacing: 0.04em;
+    text-transform: uppercase; margin-top: 0.15rem;
+  }
+
+  /* ── SECTION SHELL ── */
+  section { padding: 7rem 5vw; }
+
+  .section-eyebrow {
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--blue-500); margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.75rem);
+    font-weight: 800; letter-spacing: -0.01em;
+    line-height: 1.15; color: var(--text);
+    max-width: 520px;
+  }
+  .section-body {
+    color: var(--slate); max-width: 500px;
+    line-height: 1.75; margin-top: 1rem; font-weight: 300;
+  }
+
+  /* ── ABOUT ── */
+  .about { background: var(--white); }
+  .about-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6rem; align-items: center; max-width: 1200px; margin: 0 auto;
+  }
+  .about-visual {
+    position: relative; height: 380px;
+    border-radius: 16px; overflow: hidden;
+    background: linear-gradient(135deg, var(--blue-800), var(--blue-500));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-grid-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .about-icon-wrap {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+  }
+  .about-big-word {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 4.5rem; font-weight: 800;
+    color: rgba(255,255,255,0.12); letter-spacing: -0.02em;
+    line-height: 1; position: absolute; bottom: 1.5rem; right: 1.5rem;
+  }
+  .about-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white); border-radius: 8px;
+    padding: 0.5rem 1.1rem; font-size: 0.85rem; font-weight: 500;
+  }
+  .location-tag {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin-top: 1.5rem; font-size: 0.85rem;
+    color: var(--slate);
+  }
+  .pin { font-size: 1rem; }
+
+  /* ── STYLES ── */
+  .styles-section { background: var(--blue-900); }
+  .styles-section .section-eyebrow { color: var(--blue-400); }
+  .styles-section .section-title { color: var(--white); }
+  .styles-section .section-body { color: var(--blue-200); }
+  .styles-header { max-width: 1200px; margin: 0 auto 4rem; }
+
+  .styles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+  }
+
+  .style-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 2rem;
+    position: relative; overflow: hidden;
+    transition: border-color 0.25s, transform 0.2s;
+    cursor: default;
+  }
+  .style-card:hover {
+    border-color: rgba(59,130,246,0.5);
+    transform: translateY(-4px);
+  }
+
+  .style-num {
+    position: absolute; bottom: -0.5rem; right: 1rem;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 7rem;
+    font-weight: 800; letter-spacing: -0.02em;
+    color: rgba(255,255,255,0.04); user-select: none; line-height: 1;
+  }
+
+  .style-tag {
+    display: inline-block;
+    background: rgba(59,130,246,0.15);
+    color: var(--blue-400);
+    border-radius: 4px; padding: 0.2rem 0.6rem;
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .style-card h3 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.25rem; font-weight: 700;
+    color: var(--white); margin-bottom: 0.6rem;
+  }
+  .style-card p {
+    font-size: 0.875rem; color: rgba(255,255,255,0.5);
+    line-height: 1.6; font-weight: 300;
+  }
+  .style-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--blue-400); margin-bottom: 1.25rem;
+    box-shadow: 0 0 10px var(--blue-400);
+  }
+
+  /* ── PROCESS ── */
+  .process { background: var(--blue-50); }
+  .process-inner { max-width: 1100px; margin: 0 auto; }
+  .process-header { margin-bottom: 4rem; }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0; position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute; top: 2rem; left: 2rem; right: 2rem;
+    height: 1px; background: var(--blue-200);
+    z-index: 0;
+  }
+  .process-step { padding: 0 1.5rem 0 0; position: relative; z-index: 1; }
+  .step-circle {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--white); border: 2px solid var(--blue-400);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.5rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 800; color: var(--blue-500);
+  }
+  .process-step h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700; font-size: 1rem;
+    margin-bottom: 0.5rem; color: var(--text);
+  }
+  .process-step p { font-size: 0.85rem; color: var(--slate); line-height: 1.6; }
+
+  /* ── CONTACT ── */
+  .contact {
+    background: var(--white);
+    border-top: 1px solid var(--blue-100);
+  }
+  .contact-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6rem; max-width: 1100px; margin: 0 auto;
+    align-items: start;
+  }
+  .contact-info { padding-top: 0.5rem; }
+  .contact-detail {
+    display: flex; gap: 1rem; align-items: flex-start;
+    margin-top: 2rem;
+  }
+  .contact-icon {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: var(--blue-50); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .contact-detail h5 {
+    font-size: 0.75rem; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--slate);
+    margin-bottom: 0.2rem; font-weight: 500;
+  }
+  .contact-detail a, .contact-detail p {
+    color: var(--text); font-size: 0.95rem;
+    text-decoration: none; font-weight: 500;
+  }
+  .contact-detail a:hover { color: var(--blue-500); }
+
+  .contact-form { display: flex; flex-direction: column; gap: 1.1rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-field label {
+    font-size: 0.78rem; font-weight: 500; color: var(--slate);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .form-field input, .form-field textarea, .form-field select {
+    padding: 0.8rem 1rem; border-radius: 8px;
+    border: 1.5px solid var(--blue-100); background: var(--blue-50);
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    color: var(--text); outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+    border-color: var(--blue-400);
+    background: var(--white);
+  }
+  .form-field textarea { resize: vertical; min-height: 120px; }
+  .form-submit {
+    background: var(--blue-500); color: var(--white);
+    border: none; padding: 0.9rem; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .form-submit:hover { background: var(--blue-600); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--blue-900); padding: 2.5rem 5vw;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;
+    font-size: 1.1rem; color: var(--white);
+    letter-spacing: -0.01em;
+  }
+  .footer-logo span { color: var(--blue-400); }
+  footer p {
+    font-size: 0.8rem; color: rgba(255,255,255,0.35);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .about-inner, .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .process-steps::before { display: none; }
+    .process-steps { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .stats-bar { gap: 2rem; }
+    footer { flex-direction: column; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes pulse-ring {
+    0%   { transform: scale(0.9); opacity: 0.6; }
+    70%  { transform: scale(1.35); opacity: 0; }
+    100% { transform: scale(0.9); opacity: 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .hero-eyebrow { animation: fadeUp 0.7s ease both; }
+  .hero h1      { animation: fadeUp 0.7s 0.15s ease both; }
+  .hero p       { animation: fadeUp 0.7s 0.28s ease both; }
+  .hero-actions { animation: fadeUp 0.7s 0.4s ease both; }
+  .hero-scroll  { animation: fadeIn 1s 0.8s ease both; }
+
+  .hero-pulse {
+    position: relative; display: inline-block;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--blue-400); flex-shrink: 0;
+  }
+  .hero-pulse::after {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: var(--blue-400);
+    animation: pulse-ring 2s ease-out infinite;
+  }
+
+  .about-visual { animation: float 5s ease-in-out infinite; }
+
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .reveal-stagger > * {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .reveal-stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay: 0s; }
+  .reveal-stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay: 0.1s; }
+  .reveal-stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay: 0.2s; }
+  .reveal-stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay: 0.3s; }
+  .reveal-stagger.visible > *:nth-child(5) { opacity:1; transform:none; transition-delay: 0.4s; }
+
+  .step-circle { transition: background 0.2s, color 0.2s, transform 0.2s; }
+  .process-step:hover .step-circle {
+    background: var(--blue-500); color: var(--white); transform: scale(1.1);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Numeric<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#styles">Styles</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="network-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span class="hero-pulse"></span> Web Build Studio</div>
+    <h1>We build sites that <em>work for you</em></h1>
+    <p>Numeric is a UK-based web studio crafting custom websites across a full range of styles — from bold and editorial to clean and commercial.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Start a project</a>
+      <a href="#styles" class="btn-ghost">View our styles</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar reveal-stagger">
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Custom built</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">Fast</div>
+    <div class="stat-label">Turnaround times</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">5+</div>
+    <div class="stat-label">Website styles</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">Remote</div>
+    <div class="stat-label">UK-based</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-inner reveal">
+    <div>
+      <div class="section-eyebrow">About Numeric</div>
+      <h2 class="section-title">A local studio with a broad range of craft</h2>
+      <p class="section-body">We work with businesses, creatives, and startups to bring their ideas online. Every project is built from scratch — no templates, no shortcuts, just purposeful design and solid code.</p>
+      <p class="section-body" style="margin-top:1rem;">Whether you need a sleek portfolio, a powerful ecommerce store, or a compelling brand website — we adapt our approach to fit your vision and your audience.</p>
+      <div class="location-tag">
+        <span class="pin">📍</span>
+        UK-based
+      </div>
+    </div>
+    <div class="about-visual">
+      <div class="about-grid-lines"></div>
+      <div class="about-icon-wrap">
+        
+        <div class="about-badge">Custom Builds Only</div>
+        <div class="about-badge">Mobile-First Design</div>
+      </div>
+      <div class="about-big-word">web.</div>
+    </div>
+  </div>
+</section>
+
+<!-- STYLES -->
+<section class="styles-section" id="styles">
+  <div class="styles-header">
+    <div class="section-eyebrow">Our Range</div>
+    <h2 class="section-title">A style for every vision</h2>
+    <p class="section-body">We don't have one look. We adapt our design language to match your brand and what it needs to communicate.</p>
+  </div>
+  <div class="styles-grid reveal-stagger">
+    <div class="style-card">
+      <div class="style-dot"></div>
+      <div class="style-tag">Minimal</div>
+      <h3>Clean & Modern</h3>
+      <p>Lots of white space, precise typography, and refined simplicity. Ideal for agencies, consultants, and premium brands.</p>
+      <div class="style-num">1</div>
+    </div>
+    <div class="style-card">
+      <div class="style-dot" style="background:#f59e0b;box-shadow:0 0 10px #f59e0b"></div>
+      <div class="style-tag" style="background:rgba(245,158,11,0.15);color:#f59e0b">Bold</div>
+      <h3>Editorial & Bold</h3>
+      <p>High-impact layouts, expressive typography, and strong visual hierarchy. Great for creative studios and media brands.</p>
+      <div class="style-num">2</div>
+    </div>
+    <div class="style-card">
+      <div class="style-dot" style="background:#10b981;box-shadow:0 0 10px #10b981"></div>
+      <div class="style-tag" style="background:rgba(16,185,129,0.15);color:#10b981">Commerce</div>
+      <h3>E-commerce Ready</h3>
+      <p>Product-led design that converts — clear calls to action, fast load times, and trust-building layouts.</p>
+      <div class="style-num">3</div>
+    </div>
+    <div class="style-card">
+      <div class="style-dot" style="background:#a78bfa;box-shadow:0 0 10px #a78bfa"></div>
+      <div class="style-tag" style="background:rgba(167,139,250,0.15);color:#a78bfa">Portfolio</div>
+      <h3>Portfolio & Showcase</h3>
+      <p>Designed to let your work breathe. Scroll-driven storytelling, smooth transitions, and image-forward layouts.</p>
+      <div class="style-num">4</div>
+    </div>
+    <div class="style-card">
+      <div class="style-dot" style="background:#f87171;box-shadow:0 0 10px #f87171"></div>
+      <div class="style-tag" style="background:rgba(248,113,113,0.15);color:#f87171">Corporate</div>
+      <h3>Professional & Corporate</h3>
+      <p>Structured, trustworthy, and polished. Suited for finance, law, and business-facing companies that need authority.</p>
+      <div class="style-num">5</div>
+    </div>
+    <div class="style-card">
+      <div class="style-dot" style="background:#38bdf8;box-shadow:0 0 10px #38bdf8"></div>
+      <div class="style-tag" style="background:rgba(56,189,248,0.15);color:#38bdf8">Startup</div>
+      <h3>Startup & SaaS</h3>
+      <p>Modern feature-led pages with social proof, pricing sections, and smooth UX — built to launch and scale fast.</p>
+      <div class="style-num">6</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <div class="process-header">
+      <div class="section-eyebrow">How it works</div>
+      <h2 class="section-title">Simple process, serious results</h2>
+    </div>
+    <div class="process-steps reveal-stagger">
+      <div class="process-step">
+        <div class="step-circle">01</div>
+        <h4>Discovery</h4>
+        <p>We get to understand your goals, audience, and brand before anything is designed.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-circle">02</div>
+        <h4>Design</h4>
+        <p>We present a clear visual direction tailored to your chosen style and feedback on it together.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-circle">03</div>
+        <h4>Build</h4>
+        <p>Your site is coded from scratch — fast, responsive, and optimised for search engines.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-circle">04</div>
+        <h4>Launch</h4>
+        <p>We handle the go-live and make sure everything is running smoothly before handing over.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-inner reveal">
+    <div class="contact-info">
+      <div class="section-eyebrow">Get in touch</div>
+      <h2 class="section-title">Let's build something together</h2>
+      <p class="section-body">We work with clients across the UK. Drop us a message and we'll get back to you promptly.</p>
+
+      <div class="contact-detail">
+        <div class="contact-icon">✉️</div>
+        <div>
+          <h5>Email</h5>
+          <a href="mailto:numeric.web.build@gmail.com">numeric.web.build@gmail.com</a>
+        </div>
+      </div>
+      
+    </div>
+
+    <form class="contact-form" action="https://formspree.io/f/xvznjqpg" method="POST">
+      <div class="form-row">
+        <div class="form-field">
+          <label>Your name</label>
+          <input type="text" name="name" placeholder="Jane Smith" required>
+        </div>
+        <div class="form-field">
+          <label>Email address</label>
+          <input type="email" name="email" placeholder="you@example.com" required>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Website style</label>
+        <select name="style">
+          <option value="">Select a style...</option>
+          <option>Clean & Modern</option>
+          <option>Editorial & Bold</option>
+          <option>E-commerce</option>
+          <option>Portfolio & Showcase</option>
+          <option>Professional & Corporate</option>
+          
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Tell us about your project</label>
+        <textarea name="message" placeholder="What are you looking to build? Any details about your business, timeline, or budget are helpful."></textarea>
+      </div>
+      <button type="submit" class="form-submit">Send message →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Numeric<span>.</span></div>
+  <p>© 2025 Numeric Web Build Studio</p>
+  <p>numeric.web.build@gmail.com</p>
+</footer>
+
+<script>
+// ── Animated Network Canvas ──
+const canvas = document.getElementById('network-canvas');
+const ctx = canvas.getContext('2d');
+
+let W, H, nodes = [], mouse = { x: -999, y: -999 };
+const NODE_COUNT = 60;
+const CONNECT_DIST = 160;
+
+function resize() {
+  W = canvas.width = canvas.offsetWidth;
+  H = canvas.height = canvas.offsetHeight;
+}
+
+function initNodes() {
+  nodes = [];
+  for (let i = 0; i < NODE_COUNT; i++) {
+    nodes.push({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2 + 1
+    });
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Lines
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < CONNECT_DIST) {
+        const alpha = (1 - dist / CONNECT_DIST) * 0.35;
+        ctx.strokeStyle = `rgba(59,130,246,${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x, nodes[i].y);
+        ctx.lineTo(nodes[j].x, nodes[j].y);
+        ctx.stroke();
+      }
+    }
+    // Mouse connection
+    const mdx = nodes[i].x - mouse.x;
+    const mdy = nodes[i].y - mouse.y;
+    const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+    if (mdist < 200) {
+      const alpha = (1 - mdist / 200) * 0.6;
+      ctx.strokeStyle = `rgba(96,165,250,${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(nodes[i].x, nodes[i].y);
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.stroke();
+    }
+  }
+
+  // Nodes
+  nodes.forEach(n => {
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(96,165,250,0.7)';
+    ctx.fill();
+
+    n.x += n.vx; n.y += n.vy;
+    if (n.x < 0 || n.x > W) n.vx *= -1;
+    if (n.y < 0 || n.y > H) n.vy *= -1;
+  });
+
+  requestAnimationFrame(draw);
+}
+
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - rect.left;
+  mouse.y = e.clientY - rect.top;
+});
+canvas.addEventListener('mouseleave', () => { mouse.x = -999; mouse.y = -999; });
+
+window.addEventListener('resize', () => { resize(); });
+resize(); initNodes(); draw();
+
+// ── Form ──
+async function handleSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('.form-submit');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      btn.textContent = '✓ Message sent!';
+      btn.style.background = '#10b981';
+      form.reset();
+      setTimeout(() => {
+        btn.textContent = 'Send message →';
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 4000);
+    } else {
+      throw new Error();
+    }
+  } catch {
+    btn.textContent = '✗ Something went wrong — try emailing us directly';
+    btn.style.background = '#ef4444';
+    btn.disabled = false;
+    setTimeout(() => {
+      btn.textContent = 'Send message →';
+      btn.style.background = '';
+    }, 5000);
+  }
+}
+
+// Scroll reveal observer
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      observer.unobserve(el.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => observer.observe(el));
+
+</script>
+</body>
+</html>
